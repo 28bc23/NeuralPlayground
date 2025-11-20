@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
 
 
 [RequireComponent(typeof(MeshGenerator), typeof(NN))]
@@ -17,6 +19,9 @@ public class AgentBase : MonoBehaviour
     public float energy = 10;
     public float foodEnergy = 2;
     public float agentEnergy = 4;
+    public int foodEaten = 0;
+    public int kills = 0;
+    public int children = 0;
     public int score = 0;
     public bool mood = false;
 
@@ -32,6 +37,7 @@ public class AgentBase : MonoBehaviour
 
         energy = (int)Random.Range(energy-2, energy);
     }
+
 
     // Update is called once per frame
     void Update()
@@ -265,6 +271,7 @@ public class AgentBase : MonoBehaviour
         {
             energy += foodEnergy;
             score++;
+            foodEaten++;
             energy = Mathf.Clamp(energy, 0, 10);
             Destroy(collision.gameObject);
         }
@@ -302,6 +309,7 @@ public class AgentBase : MonoBehaviour
                 {
                     a.energy += agentEnergy;
                     a.score += 4;
+                    a.kills++;
                     a.energy = Mathf.Clamp(a.energy, 0, 10);
 
                     score -= 4;
@@ -312,6 +320,7 @@ public class AgentBase : MonoBehaviour
                 {
                     energy += agentEnergy;
                     score += 4;
+                    kills++;
                     energy = Mathf.Clamp(energy, 0, 10);
 
                     a.score -= 4;
@@ -699,5 +708,8 @@ public class AgentBase : MonoBehaviour
         GameObject prefab = AgentsManager.GetPrefab();
         GameObject agentPrefab = Instantiate(prefab, (transform.position + new Vector3(0, 10, 0)), transform.rotation);
         agentPrefab = Crossbreeding(a, agentPrefab);
+
+        a.children++;
+        children++;
     }
 }

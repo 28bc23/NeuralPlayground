@@ -1,9 +1,24 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class AgentsManager : MonoBehaviour
 {
+    InputSystem_Actions inputActions;
+    [SerializeField] GameObject statsPanel;
+    [SerializeField] NNGraphMaker nnPanel;
+    [SerializeField] TMP_Text nameStats;
+    [SerializeField] TMP_Text scoreStats;
+    [SerializeField] TMP_Text killsStats;
+    [SerializeField] TMP_Text foodStats;
+    [SerializeField] TMP_Text childrenStats;
+
+    [SerializeField] string scoreStr = "Score: ";
+    [SerializeField] string killsStr = "Kills: ";
+    [SerializeField] string foodStr = "Food eaten: ";
+    [SerializeField] string childrenStr = "Chindren: ";
+
     [SerializeField] int agentCount = 30;
     [SerializeField] Vector2 spawningArea = new Vector2(100, 100);
     [SerializeField] GameObject agentPrefab;
@@ -30,6 +45,42 @@ public class AgentsManager : MonoBehaviour
         bestTextStatic = bestText;
         bestFeTextStatic = bestFeText;
         agentPrefabStatic = agentPrefab;
+        inputActions = new InputSystem_Actions();
+    }
+
+    #region Enable/Disable - inputSystem
+    private void OnEnable()
+    {
+        inputActions.Enable();
+        inputActions.Player.LeftClick.performed += OnClicked_Performed;
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Disable();
+    }
+    #endregion
+
+    public void OnClicked_Performed(InputAction.CallbackContext cbx)
+    {
+        Vector2 mousePosStart = Mouse.current.position.ReadValue();
+        Ray ray = Camera.main.ScreenPointToRay(mousePosStart);
+        RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll (ray, Mathf.Infinity);
+
+        foreach (RaycastHit2D hit in hits)
+        {
+            AgentBase agentBase;
+            if(hit.transform.TryGetComponent<AgentBase>(out agentBase))
+            {
+                nameStats.text = agentBase.gameObject.name;
+                scoreStats.text = scoreStr + agentBase.score;
+                killsStats.text = killsStr + agentBase.kills;
+                foodStats.text = foodStr + agentBase.foodEaten;
+                childrenStats.text = childrenStr + agentBase.children;
+                nnPanel.MakeGraph(null, null, null);
+                statsPanel.SetActive(true);
+            }
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
