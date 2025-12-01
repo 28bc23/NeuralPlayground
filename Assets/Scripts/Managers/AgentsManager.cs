@@ -40,8 +40,7 @@ public class AgentsManager : MonoBehaviour
     public static int gen = 0;
 
     bool wasGen0 = false;
-
-    static List<uint> usedIDs = new List<uint>();
+    static uint id = 0; 
 
     private float timer; 
     
@@ -259,16 +258,14 @@ public class AgentsManager : MonoBehaviour
 
     public static uint GetFreeID()
     {
-        uint id = 0;
-        while (true)
+        try
         {
-            id = (uint)Random.Range(0, uint.MaxValue);
-
-            if (usedIDs.Contains(id)) continue;
-
-            usedIDs.Add(id);
-            break;
+            id++;
+        }catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
         }
+        
         return id;
     }
 
@@ -293,23 +290,19 @@ public class AgentsManager : MonoBehaviour
         bestText.text = "Last gen best score: " + sortedAgents[0].score;
         bestFeText.text = "Last gen worst score: " + sortedAgents[sortedAgents.Count - 1].score;
 
-        while(selectedAgents.Count > 0)
-        {
-            int randIdx1 = Random.Range(0, selectedAgents.Count-1);
-            int randIdx2 = Random.Range(0, selectedAgents.Count-1);
-            for (int i = 0; i < agentCount / (10 / 2); i++)
-            {
-                float x = Random.Range(-spawningArea.x, spawningArea.x);
-                float y = Random.Range(-spawningArea.y, spawningArea.y);
-                Vector3 pos = new Vector3(x, y);
-                Quaternion rot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
 
-                GameObject go = selectedAgents[randIdx1].CrossbreedingG(selectedAgents[randIdx2], Instantiate(agentPrefab, pos, rot));
-                go.transform.parent = transform;
-            }
-            selectedAgents.RemoveAt(randIdx1);
-            selectedAgents.RemoveAt(randIdx2);
-        }       
+        for (int i = 0; i < agentCount; i++)
+        {
+            int randIdx1 = Random.Range(0, selectedAgents.Count);
+            int randIdx2 = Random.Range(0, selectedAgents.Count);
+            float x = Random.Range(-spawningArea.x, spawningArea.x);
+            float y = Random.Range(-spawningArea.y, spawningArea.y);
+            Vector3 pos = new Vector3(x, y);
+            Quaternion rot = Quaternion.Euler(0, 0, Random.Range(0.0f, 360.0f));
+
+            GameObject go = selectedAgents[randIdx1].CrossbreedingG(selectedAgents[randIdx2], Instantiate(agentPrefab, pos, rot));
+            go.transform.parent = transform;
+        }      
 
         foreach(Transform t in transform)
         {
