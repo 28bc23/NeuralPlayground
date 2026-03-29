@@ -3,6 +3,9 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Unity](https://img.shields.io/badge/Made%20with-Unity-black.svg?logo=unity)](https://unity.com/)
 
+> [!WARNING]
+> This repository is no longer under active development
+
 **NeuralPlayground** is an experimental project built in **Unity** that serves as a playground for simulating, training, and visualizing neural networks.
 
 ## 📋 Requirements
